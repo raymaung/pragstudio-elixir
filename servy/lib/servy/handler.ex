@@ -8,8 +8,10 @@ defmodule Servy.Handler do
   end
 
   defp parse(request) do
-    method = "GET"
-    path = "/wildthings"
+    [method, path, _] = request
+      |> String.split("\n")
+      |> List.first
+      |> String.split(" ")
 
     %{
       method: method,
