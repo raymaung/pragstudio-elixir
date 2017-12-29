@@ -63,6 +63,34 @@ defmodule Servy.HandlerTest do
     assert Handler.handle(request) == expected_response
   end
 
+  test "/about" do
+    request = """
+    GET /about HTTP/1.1
+    Host: example.com
+    User-Agent: ExampleBrowser/1.0
+    Accept: */*
+
+    """
+
+    expected_response = """
+    HTTP/1.1 200 OK
+    Content-Type: text/html
+    Content-Length: 318
+
+    <h1>Clark's Widthings Refuge</h1>
+
+    <blockquote>
+    When we contemplate the whole globe as one great dewdrop,
+    striped and dotted with continents and islands, flying through
+    space with other stars all singing and shining together as one,
+    the whole universe appears as an infinite storm of beauty.
+    -- John Muir
+    </blockquote>
+    """
+
+    assert Handler.handle(request) == expected_response
+  end
+
   test "/bears/1" do
     request = """
     GET /bears/1 HTTP/1.1
