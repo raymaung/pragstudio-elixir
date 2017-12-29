@@ -3,7 +3,7 @@ defmodule Servy.HandlerTest do
 
   alias Servy.Handler
 
-  test "test simple request" do
+  test "/wildthings" do
     request = """
     GET /wildthings HTTP/1.1
     Host: example.com
@@ -12,13 +12,33 @@ defmodule Servy.HandlerTest do
 
     """
 
-expected_response = """
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 20
+    expected_response = """
+    HTTP/1.1 200 OK
+    Content-Type: text/html
+    Content-Length: 20
 
-Bears, Lions, Tigers
-"""
+    Bears, Lions, Tigers
+    """
+
+    assert Handler.handle(request) == expected_response
+  end
+
+  test "/bears" do
+    request = """
+    GET /bears HTTP/1.1
+    Host: example.com
+    User-Agent: ExampleBrowser/1.0
+    Accept: */*
+
+    """
+
+    expected_response = """
+    HTTP/1.1 200 OK
+    Content-Type: text/html
+    Content-Length: 25
+
+    Teddy, Smokey, Paddington
+    """
 
     assert Handler.handle(request) == expected_response
   end
