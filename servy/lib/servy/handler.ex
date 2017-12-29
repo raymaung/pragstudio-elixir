@@ -38,6 +38,14 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Teddy, Smokey, Paddington"}
   end
 
+  def route(conv, "GET", "/bears/" <> id) do
+    %{conv | status: 200, resp_body: "Bear #{id}"}
+  end
+
+  def route(conv, _method, path) do
+    %{conv | status: 404, resp_body: "No #{path} here!"}
+  end
+
   def format_response(conv) do
     """
     HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
@@ -48,8 +56,15 @@ defmodule Servy.Handler do
     """
   end
 
-  def status_reason(_) do
-    "OK"
+  defp status_reason(code) do
+    %{
+      200 => "OK",
+      201 => "Created",
+      401 => "Unauthorized",
+      403 => "Forbidden",
+      404 => "Not Found",
+      500 => "Internal Server Error"
+    }[code]
   end
 
 end
