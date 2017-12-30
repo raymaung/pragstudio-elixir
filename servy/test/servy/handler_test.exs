@@ -55,9 +55,9 @@ defmodule Servy.HandlerTest do
     expected_response = """
     HTTP/1.1 200 OK
     Content-Type: text/html
-    Content-Length: 25
+    Content-Length: 85
 
-    Teddy, Smokey, Paddington
+    <ul><li>Brutus - Grizzly</li><li>Kenai - Grizzly</li><li>Scarface - Grizzly</li></ul>
     """
 
     assert Handler.handle(request) == expected_response
@@ -103,9 +103,9 @@ defmodule Servy.HandlerTest do
     expected_response = """
     HTTP/1.1 200 OK
     Content-Type: text/html
-    Content-Length: 6
+    Content-Length: 14
 
-    Bear 1
+    <h1>Teddy</h1>
     """
 
     assert Handler.handle(request) == expected_response
