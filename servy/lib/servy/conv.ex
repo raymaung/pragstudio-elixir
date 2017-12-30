@@ -7,6 +7,7 @@ defmodule Servy.Conv do
     method: "",
     path: "",
     resp_body: "",
+    params: [],
     status: nil
   ]
 

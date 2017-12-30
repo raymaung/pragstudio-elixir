@@ -130,4 +130,28 @@ defmodule Servy.HandlerTest do
 
     assert Handler.handle(request) == expected_response
   end
+
+
+  test "POST /bears" do
+    request = """
+    POST /bears HTTP/1.1
+    Host: example.com
+    User-Agent: ExampleBrowser/1.0
+    Accept: */*
+    Content-Type: application/x-www-form-urlencoded
+    Content-Length: 21
+
+    name=Baloo&type=Brown
+    """
+
+    expected_response = """
+    HTTP/1.1 201 Created
+    Content-Type: text/html
+    Content-Length: 32
+
+    Created a Brown bear named Baloo
+    """
+
+    assert Handler.handle(request) == expected_response
+  end
 end
