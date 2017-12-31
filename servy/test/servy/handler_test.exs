@@ -5,18 +5,18 @@ defmodule Servy.HandlerTest do
 
   test "/wildthings" do
     request = """
-    GET /wildthings HTTP/1.1
-    Host: example.com
-    User-Agent: ExampleBrowser/1.0
-    Accept: */*
-
+    GET /wildthings HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
     """
 
     expected_response = """
-    HTTP/1.1 200 OK
-    Content-Type: text/html
-    Content-Length: 20
-
+    HTTP/1.1 200 OK\r
+    Content-Type: text/html\r
+    Content-Length: 20\r
+    \r
     Bears, Lions, Tigers
     """
 
@@ -25,18 +25,18 @@ defmodule Servy.HandlerTest do
 
   test "/wildlife" do
     request = """
-    GET /wildthings HTTP/1.1
-    Host: example.com
-    User-Agent: ExampleBrowser/1.0
-    Accept: */*
-
+    GET /wildthings HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
     """
 
     expected_response = """
-    HTTP/1.1 200 OK
-    Content-Type: text/html
-    Content-Length: 20
-
+    HTTP/1.1 200 OK\r
+    Content-Type: text/html\r
+    Content-Length: 20\r
+    \r
     Bears, Lions, Tigers
     """
 
@@ -45,18 +45,18 @@ defmodule Servy.HandlerTest do
 
   test "/bears" do
     request = """
-    GET /bears HTTP/1.1
-    Host: example.com
-    User-Agent: ExampleBrowser/1.0
-    Accept: */*
-
+    GET /bears HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
     """
 
     expected_response = """
-    HTTP/1.1 200 OK
-    Content-Type: text/html
-    Content-Length: 341
-
+    HTTP/1.1 200 OK\r
+    Content-Type: text/html\r
+    Content-Length: 341\r
+    \r
     <h1>All The Bears</h1>
     <ul>
 
@@ -86,20 +86,40 @@ defmodule Servy.HandlerTest do
     assert Handler.handle(request) == expected_response
   end
 
-  test "/about" do
+  test "/api/bears" do
     request = """
-    GET /about HTTP/1.1
-    Host: example.com
-    User-Agent: ExampleBrowser/1.0
-    Accept: */*
-
+    GET /api/bears HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
     """
 
     expected_response = """
-    HTTP/1.1 200 OK
-    Content-Type: text/html
-    Content-Length: 318
+    HTTP/1.1 200 OK\r
+    Content-Type: application/json\r
+    Content-Length: 605\r
+    \r
+    [{"type":"Brown","name":"Teddy","id":1,"hibernating":true},{"type":"Black","name":"Smokey","id":2,"hibernating":false},{"type":"Brown","name":"Paddington","id":3,"hibernating":false},{"type":"Grizzly","name":"Scarface","id":4,"hibernating":true},{"type":"Polar","name":"Snow","id":5,"hibernating":false},{"type":"Grizzly","name":"Brutus","id":6,"hibernating":false},{"type":"Black","name":"Rosie","id":7,"hibernating":true},{"type":"Panda","name":"Roscoe","id":8,"hibernating":false},{"type":"Polar","name":"Iceman","id":9,"hibernating":true},{"type":"Grizzly","name":"Kenai","id":10,"hibernating":false}]
+    """
 
+    assert Handler.handle(request) == expected_response
+  end
+
+  test "/about" do
+    request = """
+    GET /about HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
+    """
+
+    expected_response = """
+    HTTP/1.1 200 OK\r
+    Content-Type: text/html\r
+    Content-Length: 318\r
+    \r
     <h1>Clark's Widthings Refuge</h1>
 
     <blockquote>
@@ -116,18 +136,18 @@ defmodule Servy.HandlerTest do
 
   test "/bears/1" do
     request = """
-    GET /bears/1 HTTP/1.1
-    Host: example.com
-    User-Agent: ExampleBrowser/1.0
-    Accept: */*
-
+    GET /bears/1 HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
     """
 
     expected_response = """
-    HTTP/1.1 200 OK
-    Content-Type: text/html
-    Content-Length: 71
-
+    HTTP/1.1 200 OK\r
+    Content-Type: text/html\r
+    Content-Length: 71\r
+    \r
     <h1>Show Bear</h1>
     <p>
     Is Teddy hibernating? <strong>true</strong>
@@ -139,42 +159,41 @@ defmodule Servy.HandlerTest do
 
   test "invalid path" do
     request = """
-    GET /bigfoot HTTP/1.1
-    Host: example.com
-    User-Agent: ExampleBrowser/1.0
-    Accept: */*
-
+    GET /bigfoot HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
     """
 
     expected_response = """
-    HTTP/1.1 404 Not Found
-    Content-Type: text/html
-    Content-Length: 17
-
+    HTTP/1.1 404 Not Found\r
+    Content-Type: text/html\r
+    Content-Length: 17\r
+    \r
     No /bigfoot here!
     """
 
     assert Handler.handle(request) == expected_response
   end
 
-
   test "POST /bears" do
     request = """
-    POST /bears HTTP/1.1
-    Host: example.com
-    User-Agent: ExampleBrowser/1.0
-    Accept: */*
-    Content-Type: application/x-www-form-urlencoded
-    Content-Length: 21
-
-    name=Baloo&type=Brown
+    POST /bears HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    Content-Type: application/x-www-form-urlencoded\r
+    Content-Length: 21\r
+    \r
+    name=Baloo&type=Brown\r
     """
 
     expected_response = """
-    HTTP/1.1 201 Created
-    Content-Type: text/html
-    Content-Length: 32
-
+    HTTP/1.1 201 Created\r
+    Content-Type: text/html\r
+    Content-Length: 32\r
+    \r
     Created a Brown bear named Baloo
     """
 
