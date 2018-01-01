@@ -18,7 +18,7 @@ defmodule Servy.Wildthings do
   end
 
   def get_bear(id) when is_integer(id) do
-    list_bears |> Enum.find(fn (b) -> b.id == id end)
+    list_bears() |> Enum.find(fn (b) -> b.id == id end)
   end
 
   def get_bear(id) when is_binary(id) do
