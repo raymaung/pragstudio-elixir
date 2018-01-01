@@ -4,6 +4,7 @@ defmodule Servy.Handler do
 
   alias Servy.Conv
   alias Servy.BearController
+  alias Servy.VideoCam
 
   @pages_path Path.expand("../../pages", __DIR__)
 
@@ -21,7 +22,23 @@ defmodule Servy.Handler do
     |> format_response
   end
 
-  def route(%Conv{ method: "GET", path: "/kaboom" } = conv) do
+  def route(%Conv{ method: "GET", path: "/snapshots" } = conv) do
+    parent = self() # the request-handling process
+
+    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-1")}) end)
+    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-2")}) end)
+    spawn(fn -> send(parent, {:result, VideoCam.get_snapshot("cam-3")}) end)
+
+    snapshot1 = receive do {:result, filename} -> filename end
+    snapshot2 = receive do {:result, filename} -> filename end
+    snapshot3 = receive do {:result, filename} -> filename end
+
+    snapshots = [snapshot1, snapshot2, snapshot3]
+
+    %{ conv | status: 200, resp_body: inspect snapshots}
+  end
+
+  def route(%Conv{ method: "GET", path: "/kaboom" }) do
     raise "Kaboom!"
   end
 
@@ -44,8 +61,7 @@ defmodule Servy.Handler do
     BearController.show(conv, params)
   end
 
-  def route(%Conv{method: "GET", path: "/api/bears" <> id} = conv) do
-    params = Map.put(conv.params, "id", id)
+  def route(%Conv{method: "GET", path: "/api/bears"} = conv) do
     Servy.Api.BearController.index(conv)
   end
 
