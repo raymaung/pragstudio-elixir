@@ -4,9 +4,13 @@ defmodule Servy.PledgeServer do
 
   use GenServer
 
+  defmodule State do
+    defstruct cache_size: 3, pledges: []
+  end
+
   def start() do
     IO.puts "Starting the pledge server"
-    GenServer.start(__MODULE__, [], name: @name)
+    GenServer.start(__MODULE__, %State{}, name: @name)
   end
 
   def create_pledge(name, amount) do
@@ -25,30 +29,51 @@ defmodule Servy.PledgeServer do
     GenServer.cast(@name, :clear)
   end
 
+  def set_cache_size(size) do
+    GenServer.cast(@name, {:set_cache_size, size})
+  end
+
   # Helper Functions
 
+  def init(state) do
+    pledges = fetch_recent_pledges_from_service()
+    new_state = %{state | pledges: pledges}
+    {:ok, new_state}
+  end
+
   def handle_call(:total_pledged, _from, state) do
-    total = Enum.map(state, &elem(&1, 1)) |> Enum.sum
+    total = Enum.map(state.pledges, &elem(&1, 1)) |> Enum.sum
     {:reply, total, state}
   end
 
   def handle_call(:recent_pledges, _from, state) do
-    {:reply, state, state}
+    {:reply, state.pledges, state}
   end
 
   def handle_call({:create_pledge, name, amount}, _from, state) do
     {:ok, id} = send_pledge_to_service(name, amount)
-    most_recent_pledges = Enum.take(state, 2)
-    new_state = [{name, amount} | most_recent_pledges]
+    most_recent_pledges = Enum.take(state.pledges, state.cache_size - 1)
+    pledges = [{name, amount} | most_recent_pledges]
+    new_state = %{ state | pledges: pledges}
     {:reply, id, new_state}
   end
 
-  def handle_cast(:clear, _state) do
-    {:noreply, []}
+  def handle_cast(:clear, state) do
+    new_state = %{state | pledges: []}
+    {:noreply, new_state}
+  end
+
+  def handle_cast({:set_cache_size, size}, state) do
+    new_state = %{state | cache_size: size}
+    {:noreply, new_state}
   end
 
   defp send_pledge_to_service(_name, _amount) do
     {:ok, "pledge-#{:rand.uniform(10000)}"}
+  end
+
+  defp fetch_recent_pledges_from_service() do
+    []
   end
 end
 
