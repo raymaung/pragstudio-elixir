@@ -2,49 +2,49 @@ defmodule Servy.PledgeServer do
 
   @name :pledge_server
 
-  alias Servy.GenericServer
+  use GenServer
 
   def start() do
     IO.puts "Starting the pledge server"
-    GenericServer.start(__MODULE__, [], @name)
+    GenServer.start(__MODULE__, [], name: @name)
   end
 
   def create_pledge(name, amount) do
-    GenericServer.call(@name, {:create_pledge, name, amount})
+    GenServer.call(@name, {:create_pledge, name, amount})
   end
 
   def recent_pledges() do
-    GenericServer.call(@name, :recent_pledges)
+    GenServer.call(@name, :recent_pledges)
   end
 
   def total_pledged do
-    GenericServer.call(@name, :total_pledged)
+    GenServer.call(@name, :total_pledged)
   end
 
   def clear do
-    GenericServer.cast(@name, :clear)
+    GenServer.cast(@name, :clear)
   end
 
   # Helper Functions
 
-  def handle_call(:total_pledged, state) do
+  def handle_call(:total_pledged, _from, state) do
     total = Enum.map(state, &elem(&1, 1)) |> Enum.sum
-    {total, state}
+    {:reply, total, state}
   end
 
-  def handle_call(:recent_pledges, state) do
-    {state, state}
+  def handle_call(:recent_pledges, _from, state) do
+    {:reply, state, state}
   end
 
-  def handle_call({:create_pledge, name, amount}, state) do
+  def handle_call({:create_pledge, name, amount}, _from, state) do
     {:ok, id} = send_pledge_to_service(name, amount)
     most_recent_pledges = Enum.take(state, 2)
     new_state = [{name, amount} | most_recent_pledges]
-    {id, new_state}
+    {:reply, id, new_state}
   end
 
   def handle_cast(:clear, _state) do
-    []
+    {:noreply, []}
   end
 
   defp send_pledge_to_service(_name, _amount) do
