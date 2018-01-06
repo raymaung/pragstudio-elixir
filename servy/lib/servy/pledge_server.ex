@@ -8,9 +8,9 @@ defmodule Servy.PledgeServer do
     defstruct cache_size: 3, pledges: []
   end
 
-  def start() do
+  def start_link(_args) do
     IO.puts "Starting the pledge server"
-    GenServer.start(__MODULE__, %State{}, name: @name)
+    GenServer.start_link(__MODULE__, %State{}, name: @name)
   end
 
   def create_pledge(name, amount) do
@@ -76,21 +76,3 @@ defmodule Servy.PledgeServer do
     []
   end
 end
-
-# alias Servy.PledgeServer
-
-# pid = PledgeServer.start()
-
-# # send pid, {:stop, "hammertime"}
-
-# IO.inspect PledgeServer.create_pledge("larry", 10)
-# IO.inspect PledgeServer.create_pledge("moe", 20)
-# IO.inspect PledgeServer.create_pledge("curly", 30)
-# IO.inspect PledgeServer.create_pledge("daisy", 40)
-# IO.inspect PledgeServer.create_pledge("grace", 50)
-
-# IO.inspect PledgeServer.recent_pledges()
-
-# IO.inspect PledgeServer.total_pledged()
-
-# IO.inspect Process.info(pid, :messages)

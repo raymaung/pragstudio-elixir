@@ -6,9 +6,9 @@ defmodule Servy.KickStarter do
     defstruct http_server_pid: nil
   end
 
-  def start() do
+  def start_link(_args) do
     IO.puts "Starting the kick starter"
-    GenServer.start(__MODULE__, nil, name: __MODULE__)
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def get_server do
@@ -44,12 +44,3 @@ defmodule Servy.KickStarter do
     %State{http_server_pid: server_pid}
   end
 end
-
-# {:ok, kick_pid} = Servy.KickStarter.start()
-# server_pid = Process.whereis(:http_server)
-# Process.info(kick_pid, :links)
-
-# Process.exit(server_pid, :kaboom)
-# Process.alive?(server_pid)
-# Process.alive?(kick_pid)
-
